@@ -1,10 +1,11 @@
 import React from 'react';
 import '../custom.css';
+import Comment from './Comment'
 
 class ArticleComponent extends React.Component {
 
   state = {
-    comments: [],
+    comments: this.props.post.comments,
     commentInput: "",
     displayComments: false
   }
@@ -20,7 +21,7 @@ class ArticleComponent extends React.Component {
       if(e.key === 'Enter'){
         const commentObj = {
           commentInput: this.state.commentInput,
-          userID: this.props.post.user.id,
+          userID: this.props.user.id,
           postID: this.props.post.id
         }
 
@@ -28,8 +29,10 @@ class ArticleComponent extends React.Component {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(commentObj)
-      }).then(res => res.json()).then(console.log)
-
+      }).then(res => res.json()).then(comment => this.setState({
+        comments: [...this.state.comments, comment], 
+        displayComments: true,
+        commentInput: null }))
       }
   }
 
@@ -37,12 +40,10 @@ class ArticleComponent extends React.Component {
     this.setState({displayComments: !this.state.displayComments})
   }
 
-  render() {
-
-    console.log(this.props.post);
+  render() {  
     
-
     return (
+      <React.Fragment>
       <div className="ui grid custom-card"> 
       <div className="ui card column 16 wide fulid">
         <div className="content">
@@ -52,14 +53,15 @@ class ArticleComponent extends React.Component {
             this.props.post.user.name
           }
         </div>
+
         <div className="image">
           <img src={this.props.post.image}/>
         </div>
         <div className="content">
         <a class="header">{this.props.post.title}</a>
           <span className="right floated">
-            <i className="heart outline like icon"></i>
-            17 likes
+            <i className="lemon outline like icon"></i>
+            17 Jucy rating
           </span>
           <i onClick={this.commentClick}className="comment icon"></i>
           3 comments
@@ -67,17 +69,10 @@ class ArticleComponent extends React.Component {
             {this.props.post.content}
           </div>
         </div>
-        {
+
+        { 
           this.state.displayComments ? 
-          <div class="ui list">
-        <div class="item">
-        <img className="ui avatar image" src={this.props.post.user.image} />
-        <div class="content">
-        <a class="header">Rachel</a>
-        <div class="description">Last seen watching just now.</div>
-        </div>
-        </div>
-        </div> 
+          this.state.comments.map(comment => <Comment  comment={comment} post={this.props.post} />)
         :
         null
         }
@@ -90,7 +85,7 @@ class ArticleComponent extends React.Component {
         </div>
       </div>  
       </div>
-      
+      </React.Fragment>
         );
 
 

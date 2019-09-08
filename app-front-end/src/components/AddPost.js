@@ -1,8 +1,9 @@
 import React from 'react';
 import {Link} from 'react-router-dom'
 
-class AddPost extends React.Component {
 
+class AddPost extends React.Component {
+ 
     state = {
         title: '',
         img: '',
@@ -11,6 +12,10 @@ class AddPost extends React.Component {
 
     handleChange = (e) => {
         this.setState({[e.target.name]: e.target.value})
+    }
+
+    handleImageUpload = (e) => {
+      this.setState({img: e.target.files[0]})
     }
 
     handleClick = () => {
@@ -27,7 +32,7 @@ class AddPost extends React.Component {
                     <label>Title</label>
                     <input onChange={this.handleChange} name="title" type="text"></input>
                     <label>Img URL</label>
-                    <input onChange={this.handleChange} name="img" type="text"></input>
+                    <input onChange={this.handleImageUpload} name="img" type="file"></input>
                     <label>Description</label>
                     <textarea onChange={this.handleChange} name="description"></textarea>
                     <button onClick={this.handleClick} class="ui button" type="submit">Submit</button>

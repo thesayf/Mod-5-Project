@@ -29,14 +29,14 @@ class AppContainer extends React.Component {
     toggleForm = () => this.setState({showform: !this.state.showform})
   
     render() {
-      return (
+      return ( 
         <React.Fragment>
             <div> <h1>GossApp</h1></div>
             <NavBar logOut={this.props.logOut} changeLocation={this.props.changeLocation} toggleForm={this.toggleForm} />
            {
              this.state.showform ? <ChangeLocation changeLocation={this.props.changeLocation} /> : null
            }
-            <ArticleFeed posts={this.props.posts} />
+            <ArticleFeed user={this.props.user} posts={this.props.posts} />
         </React.Fragment>
       );
     }

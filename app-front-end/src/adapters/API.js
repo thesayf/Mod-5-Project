@@ -3,6 +3,9 @@ const signupUrl = `${endpoint}/users`
 const loginUrl = `${endpoint}/login`
 const postsUrl = `${endpoint}/posts`
 const validateUrl = `${endpoint}/validate`
+const cloudinary = "https://api.cloudinary.com/v1_1/dfqall5sk/upload"
+const cloudinary_upload_preset = 'ki2mefhc'
+
 
 
 const constructHeaders = (moreHeaders = {}) => (
