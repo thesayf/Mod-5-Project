@@ -1,4 +1,5 @@
 import React from 'react';
+import '../custom.css';
 
 class ChangeLocation extends React.Component {
 
@@ -21,15 +22,11 @@ class ChangeLocation extends React.Component {
         
       return (
         <React.Fragment>
-            <div className="ui container">
+            <div className="ui container change-location-form">
             <div className="ui form">
                 <div className="field">
-                    {/* <label>latitude</label>
-                    <input onChange={this.handleChange} name="latitude" type="text"></input>
-                    <label>longitude</label>
-                    <input onChange={this.handleChange} name="longitude" type="text"></input> */}
-                    <input onChange={this.handleChange} name="searchInput" type="text"></input>
-                    <button onClick={this.handleClick} class="ui button" type="submit">Submit</button>
+                    <input placeholder="Find Gossip In a New Location" onChange={this.handleChange} name="searchInput" type="text"></input>
+                    <button onClick={this.handleClick} className="ui button input-button-margin-top" type="submit">Submit</button>
                 </div>
             </div>
             </div>

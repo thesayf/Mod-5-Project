@@ -1,5 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
+import './custom.css';
 
 class Login extends React.Component {
 
@@ -24,10 +25,15 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div>
-      <div className="ui container">
-      <div className="ui inverted segment">
-      <div className="ui inverted form">
+    <React.Fragment>
+    
+    <div className="ui Tiny image logo-text-center">
+        <img src={require('./logo_transparent_background.png')}></img>
+    </div>
+    <div className="ui container">
+    <div className="ui aligned center login-box-padding">
+      <div className="ui segment">
+      <div className="ui form">
         <div className="two fields">
           <div className="field">
             <label>email</label>
@@ -44,8 +50,9 @@ class Login extends React.Component {
         <div onClick={this.handleClick}className="ui submit button">Submit</div>
       </div>
     </div>
+    </div> 
     </div>
-    </div>
+    </React.Fragment>
     )
   }
 }

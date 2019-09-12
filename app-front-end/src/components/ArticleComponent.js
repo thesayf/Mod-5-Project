@@ -6,8 +6,25 @@ class ArticleComponent extends React.Component {
 
   state = {
     comments: this.props.post.comments,
+    likes: this.props.post.ratings.length,
     commentInput: "",
-    displayComments: false
+    thisPostsLikes: this.props.post.ratings,
+    displayComments: false,
+    liked: '',
+    thisUserLiked: []
+  }
+
+  componentDidMount = () => {
+   const liked = this.props.post.ratings.map(r => r.user_info.id).includes(this.props.user.id)
+    this.setState({liked: liked})
+
+    let thisusersliked = this.state.thisPostsLikes.map(rating => {
+      if(rating.user_id === this.props.user.id) {
+        return rating.id
+      }
+    })
+
+    this.setState({thisUserLiked: thisusersliked})
   }
 
   handleChange = (e) => {
@@ -24,7 +41,6 @@ class ArticleComponent extends React.Component {
           userID: this.props.user.id,
           postID: this.props.post.id
         }
-
         fetch("http://localhost:3000/newcomment", {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -32,7 +48,7 @@ class ArticleComponent extends React.Component {
       }).then(res => res.json()).then(comment => this.setState({
         comments: [...this.state.comments, comment], 
         displayComments: true,
-        commentInput: null }))
+        commentInput: "" }))
       }
   }
 
@@ -40,7 +56,44 @@ class ArticleComponent extends React.Component {
     this.setState({displayComments: !this.state.displayComments})
   }
 
+  addLikes = () => {
+
+   if(this.state.liked){
+    const dislikeObj = {
+      likeId: this.state.thisUserLiked[0]
+    }
+    fetch("http://localhost:3000/deleterating", {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify(dislikeObj)
+          }).then(res => res.json()).then(this.setState({likes: this.state.likes - 1, liked: false}))
+   }
+   else{
+    const likeObj = {
+              userID: this.props.user.id,
+              postID: this.props.post.id
+            }
+            fetch("http://localhost:3000/newrating", {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify(likeObj)
+          })
+          .then(res => res.json())
+          .then(like => this.setState({
+            likes: this.state.likes + 1, 
+            liked: true,
+            thisPostsLikes: [...this.state.thisPostsLikes, like]
+          }))
+   }
+    
+  
+  
+  }
+
+
   render() {  
+    // console.log(this.props.post.ratings);
+    console.log(this.state.thisPostsLikes);
     
     return (
       <React.Fragment>
@@ -58,18 +111,18 @@ class ArticleComponent extends React.Component {
           <img src={this.props.post.image}/>
         </div>
         <div className="content">
-        <a class="header">{this.props.post.title}</a>
-          <span className="right floated">
+        <a className="header">{this.props.post.title}</a>
+          <span onClick={this.addLikes} className="right floated">
             <i className="lemon outline like icon"></i>
-            17 Jucy rating
+            {this.state.likes} Jucy rating
           </span>
           <i onClick={this.commentClick}className="comment icon"></i>
-          3 comments
-          <div class="description">
+          
+          {this.props.post.comments.length} comments
+          <div className="description">
             {this.props.post.content}
           </div>
         </div>
-
         { 
           this.state.displayComments ? 
           this.state.comments.map(comment => <Comment  comment={comment} post={this.props.post} />)
@@ -80,7 +133,7 @@ class ArticleComponent extends React.Component {
         <div className="extra content">
           <div className="ui large transparent left icon input">
             <i className="heart outline icon"></i>
-            <input onKeyPress={this.handleKeyPress} onChange={e => this.handleChange(e)} type="text" placeholder="Add Comment..."></input>
+            <input value={this.state.commentInput} onKeyPress={this.handleKeyPress} onChange={e => this.handleChange(e)} type="text" placeholder="Add Comment..."></input>
           </div>
         </div>
       </div>  

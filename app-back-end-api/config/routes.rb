@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :ratings
   resources :comments
   post "/posts", to: 'posts#find_by_current_location'
   post "/search", to: 'posts#search_address'
@@ -6,6 +7,8 @@ Rails.application.routes.draw do
   post "/login", to: 'auth#create'
   post "newcomment", to: 'comments#create_new_comment'
   get "/validate", to: 'auth#validate_token'
+  post "/newrating", to: 'ratings#create_new_rating'
+  post "/deleterating", to: 'ratings#delete_new_rating'
   resources :posts
   resources :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

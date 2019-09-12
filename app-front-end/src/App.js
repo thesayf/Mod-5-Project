@@ -13,7 +13,9 @@ class App extends React.Component {
     user: undefined,
     longitude: null,
     latitude: null,
-    posts: []
+    posts: [],
+    currentLocation: true,
+    altPosts: []
   }
 
   componentDidMount() {
@@ -21,6 +23,22 @@ class App extends React.Component {
       .then(user => {
         if(!user.error) this.setState({user: user})
       })
+    console.log("getting locations")
+    this.getLocation()
+  }
+
+  getLocation = () => {
+    this.setState({currentLocation: true})
+    if(navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.showPosition);
+    } else {
+      console.log("Geo Location not supported by browser");
+    }
+  }
+
+  showPosition = (position) => {
+    console.log(position)
+    this.getPostsBySearch(position)
   }
 
   login = user => {
@@ -34,52 +52,36 @@ class App extends React.Component {
   }
 
   addPost = state => {
-    const postObj = {
-          title: state.title,
-          img: state.img,
-          description: state.description,
-          userID: this.state.user.id,
-          longitude: this.state.longitude,
-          latitude: this.state.latitude
-      }
+    console.log(state)
 
-      console.log(state.img)
+    const h = new Headers();
+    h.append('Accept', 'application/json');
+    let fd = new FormData();
+    fd.append("title", state.title)
+    fd.append("description", state.description)
+    fd.append("userID", this.state.user.id)
+    fd.append("longitude", this.state.longitude)
+    fd.append("latitude", this.state.latitude)
+    // fd.append('image', state.img, "avatar.png")
+    if(state.recordedImage){
+      fd.append("image", state.recordedImage)
+    }
+    else{
+      fd.append('image', state.img, "avatar.png")
+    }
 
-  // const h = new Headers();
-  // h.append('Accept', 'application/json');
-  // let fd = new FormData();
-  // fd.append('image', state.img, "avatar.png")
 
+    let req = new Request("http://localhost:3000/newpost", {
+      method: 'POST',
+      headers: h,
+      body: fd
+    })
 
-
-  // axios({
-  //   url: "https://api.cloudinary.com/v1_1/dfqall5sk/image/upload",
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/x-www-form-urlencoded'
-  //   },
-  //   data: fd
-  // }).then(console.log).catch(console.log)
-
-  // let req = new Request("http://localhost:3000/newpost", {
-  //   method: 'POST',
-  //   headers: h,
-  //   mode: 'no-cors',
-  //   body: fd
-  // })
-
-  // fetch(req).then(console.log)
-    
-    // fetch("http://localhost:3000/newpost", {
-    //     method: 'POST',
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: JSON.stringify(postObj)
-    //   }).then(res => res.json()).then(post => this.setState({posts: [...this.state.posts, post]})).then(this.props.history.push('/app'))
+    fetch(req).then(res => res.json()).then(post => this.setState({posts: [...this.state.posts, post]})).then(this.props.history.push('/app'))
   }
 
-  getLocation = (position) => {
+  getPostsBySearch = (position) => {
     console.log("searching locations ")
-
         this.setState({longitude: position.coords.longitude, latitude: position.coords.latitude })
         const postObj = {
         longitude: this.state.longitude,
@@ -124,14 +126,19 @@ class App extends React.Component {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(postObj)
-        }).then(res => res.json()).then(posts => this.setState({posts: posts}))
+        }).then(res => res.json()).then(posts => this.setState({currentLocation: false, altPosts: posts}))
+  }
 
-    
+  posts = () => {
+    if(this.state.currentLocation){
+      return this.state.posts
+    }else{
+      return this.state.altPosts
+    }
   }
 
   render() {
-    // console.log(this.state.posts);
-    
+
     return (
       <React.Fragment>
 
@@ -139,7 +146,7 @@ class App extends React.Component {
         {
           !this.state.user ? <Redirect to="/"></Redirect> : <Redirect to="/app"></Redirect> 
         }
-      <Route path="/app" exact component={() => <AppContainer user={this.state.user} changeLocation={this.changeLocation} logOut={this.logOut} posts={this.state.posts} getLocation={this.getLocation} />} />
+      <Route path="/app" exact component={() => <AppContainer getLocation={this.getLocation} user={this.state.user} changeLocation={this.changeLocation} logOut={this.logOut} posts={this.posts()} getLocation={this.getLocation} />} />
       <Route path="/signUp" exact component={() => <SignUp signUp={this.signUp}/>} />
       <Route path="/addPost" exact component={() => <AddPost addPost={this.addPost} />} />
       </React.Fragment>

@@ -1,6 +1,7 @@
 class PostSerializer < ActiveModel::Serializer
   attributes :created_at, :title, :content, :image, :id, :latitude, :longitude, :address, :user
   has_many :comments
+  has_many :ratings
 
   def user
     UserSerializer.new(self.object.user)

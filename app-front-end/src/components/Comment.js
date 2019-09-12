@@ -7,12 +7,12 @@ class Comment extends React.Component {
       return (
         <React.Fragment>
             <div className="ui container">
-            <div class="ui list">
-        <div class="item">
+            <div className="ui list">
+        <div className="item">
         <img className="ui avatar image" src={this.props.comment.user_info.image} />
-        <div class="content">
-        <a class="header">{this.props.comment.user_info.name}</a>
-        <div class="description">{this.props.comment.content}</div>
+        <div className="content">
+        <a className="header">{this.props.comment.user_info.name}</a>
+        <div className="description">{this.props.comment.content}</div>
         </div>
         </div>
         </div> 

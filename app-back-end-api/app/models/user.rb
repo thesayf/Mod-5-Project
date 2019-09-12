@@ -1,8 +1,8 @@
 class User < ApplicationRecord
     has_many :posts
     has_many :comments
+    has_many :ratings
     has_secure_password
-    
 
     def token
         JWT.encode({ user_id: self.id }, ENV['RAILS_SECRET'])

@@ -17,33 +17,33 @@ handleClick = () => {
   this.props.changeLocation(this.state)
 }
 
+goHome = () => {
+  console.log("getting location")
+  this.props.getLocation()
+}
+
 logOut = () => {
       this.props.logOut()
 }
   render() {
     return (
-      <div className="ui secondary  menu">
-    <a className="active item">
-        Home
+      <div className="ui menu">
+    <a onClick={this.goHome} className="item">
+    <i class="home icon"></i>
+    home
     </a>
     <a className="item">
-    <Link to={'/addPost'}>Create Post</Link>
+    <i class="plus icon"></i>
+    <Link to={'/addPost'}>Post</Link>
     </a>
     <a onClick={this.props.toggleForm} className="item">
-      change location
-      {/* change location */}
-    {/* <Link to={'/changeLocation'}>change location</Link> */}
-    {/* <input onChange={this.handleChange} placeholder="lat" name="latitude" type="text" />
-    <input onChange={this.handleChange} type="text" name="longitude" placeholder="long" />
-    <a onClick={this.handleClick} className="ui item">
-        change
-      </a> */}
+    <i class="compass icon"></i>
+      Location
     </a>
-    <div className="right menu">
-      <a onClick={this.logOut} className="ui item">
-        Logout
+      <a className="item" onClick={this.logOut}>
+      <i class="sign out alternate icon"></i>
+      Log Out
       </a>
-    </div>
   </div>
     );
 
@@ -51,11 +51,3 @@ logOut = () => {
 }
 
 export default NavBar;
-
-
-/* <div className="item">
-      <div className="ui icon input">
-        <input type="text" placeholder="Search..." />
-        <i className="search link icon"></i>
-      </div>
-    </div> */

@@ -10,29 +10,18 @@ class AppContainer extends React.Component {
     showform: false
   }
 
-    getLocation = () => {
-      if(navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.showPosition);
-      } else {
-        console.log("Geo Location not supported by browser");
-      }
-    }
-
-    showPosition = (position) => {
-      this.props.getLocation(position)
-    }
-
-    componentDidMount = () => {
-      this.getLocation()
-    }
-
     toggleForm = () => this.setState({showform: !this.state.showform})
   
     render() {
+      const imageInline = {
+          marginLeft: "110px"
+      }
       return ( 
         <React.Fragment>
-            <div> <h1>GossApp</h1></div>
-            <NavBar logOut={this.props.logOut} changeLocation={this.props.changeLocation} toggleForm={this.toggleForm} />
+            <div style={imageInline} className="ui small image header-margin-top"> 
+            <img className="margin-left-100" src={require('./logo_transparent_background_no_background.png')}></img>
+            </div>
+            <NavBar getLocation={this.props.getLocation} logOut={this.props.logOut} changeLocation={this.props.changeLocation} toggleForm={this.toggleForm} />
            {
              this.state.showform ? <ChangeLocation changeLocation={this.props.changeLocation} /> : null
            }
