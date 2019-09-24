@@ -29,15 +29,12 @@ class AddPost extends React.Component {
     }
 
     chooseFileUpload = () => {
-      console.log("this is working");
-      
       this.setState({cameraUpload: false, fileUpload: true})
     }
 
     chooseCameraUpload = () => {
       this.setState({fileUpload: false, cameraUpload: true})
     }
-
 
     handleImageUpload = (e) => {
       this.setState({img: e.target.files[0]})
@@ -57,7 +54,6 @@ class AddPost extends React.Component {
     }; 
 
     navigator.mediaDevices.getUserMedia(constraintObj).then(media => {
-      console.log(media)
       let video = document.querySelector('video');
       video.srcObject = media;
       video.onloadedmetadata = (ev) => video.play();
@@ -75,12 +71,7 @@ class AddPost extends React.Component {
             this.state.displayCamera ? 
             
             <div className="ui container">
-              {
-                this.state.pictureTaken ? 
-                null
-                :
                 <video controls></video>
-              }
               <button onClick={this.takePhoto} className="ui button">Snap</button>
               <Link to={'/addPost'}>back</Link>
               <canvas width="640" height="480"></canvas>

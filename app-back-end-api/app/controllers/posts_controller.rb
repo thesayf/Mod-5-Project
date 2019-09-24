@@ -17,7 +17,11 @@ class PostsController < ApplicationController
 
     def search_address
         address = Geocoder.search(params[:searchInput])
-        render json: address.first.coordinates, include: [:user, :comments]
+        if (address.length > 0)
+            render json: address.first.coordinates, include: [:user, :comments]
+        else
+            render json: { error: "Could not find that address" }
+        end
     end
 
 end

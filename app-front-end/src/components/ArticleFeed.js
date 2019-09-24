@@ -4,11 +4,13 @@ import ArticleComponent from './ArticleComponent';
 function ArticleFeed(props) {
 
   return (
-    <div className="App">
+    <React.Fragment>
+      <div className="article-container">
       {
         props.posts.map(post => <ArticleComponent user={props.user} addComment={props.addComment} key={post.id} post={post} />)
       }
-    </div>
+      </div>
+    </React.Fragment>
   );
 }
  

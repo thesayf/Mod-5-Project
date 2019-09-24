@@ -5,7 +5,7 @@ import AddPost from './components/AddPost'
 import AppContainer from './AppContainer'
 import {Route, Redirect} from 'react-router-dom'
 import API from './adapters/API';
-import axios from 'axios'
+import './custom.css';
 
 class App extends React.Component {
 
@@ -18,122 +18,72 @@ class App extends React.Component {
     altPosts: []
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     API.validateUser()
       .then(user => {
         if(!user.error) this.setState({user: user})
       })
-    console.log("getting locations")
+
     this.getLocation()
   }
 
   getLocation = () => {
     this.setState({currentLocation: true})
-    if(navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.showPosition);
-    } else {
-      console.log("Geo Location not supported by browser");
-    }
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.showPosition);
+      } else {
+        alert("Geo Location not supported by browser")
+      }
+
   }
 
   showPosition = (position) => {
-    console.log(position)
-    this.getPostsBySearch(position)
+    this.setState({longitude: position.coords.longitude, latitude: position.coords.latitude})
+      API.getPostsByCurrentLocation(this.state.longitude, this.state.latitude).then(posts => this.setState({posts: posts}))
   }
 
   login = user => {
     API.logIn(user)
-    .then(user => this.setState({user: user}))
+      .then(user => this.setState({user: user}))
   }
 
   signUp = user => {
     API.logIn(user)
-    .then(user => this.setState({user: user})).then(this.props.history.push('/app'))
+      .then(user => this.setState({user: user})).then(this.props.history.push('/app'))
   }
 
-  addPost = state => {
-    console.log(state)
-
-    const h = new Headers();
-    h.append('Accept', 'application/json');
-    let fd = new FormData();
-    fd.append("title", state.title)
-    fd.append("description", state.description)
-    fd.append("userID", this.state.user.id)
-    fd.append("longitude", this.state.longitude)
-    fd.append("latitude", this.state.latitude)
-    // fd.append('image', state.img, "avatar.png")
-    if(state.recordedImage){
-      fd.append("image", state.recordedImage)
-    }
-    else{
-      fd.append('image', state.img, "avatar.png")
-    }
-
-
-    let req = new Request("http://localhost:3000/newpost", {
-      method: 'POST',
-      headers: h,
-      body: fd
-    })
-
-    fetch(req).then(res => res.json()).then(post => this.setState({posts: [...this.state.posts, post]})).then(this.props.history.push('/app'))
-  }
-
-  getPostsBySearch = (position) => {
-    console.log("searching locations ")
-        this.setState({longitude: position.coords.longitude, latitude: position.coords.latitude })
-        const postObj = {
-        longitude: this.state.longitude,
-        latitude: this.state.latitude
-        }
-    
-        fetch("http://localhost:3000/posts", {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(postObj)
-        }).then(res => res.json()).then(posts => this.setState({posts: posts}))
-      
+  addPost = formDetails => {
+    API.createPost(formDetails, this.state).then(post => this.setState({posts: [...this.state.posts, post]})).then(this.props.history.push('/app'))
   }
 
   logOut = () => {
     localStorage.removeItem('token')
-    this.setState({ user: undefined })
+      this.setState({ user: undefined })
+        this.props.history.push('/')
   }
 
   changeLocation = (state) => {
-      const search ={
-        searchInput: state
-      }
+      API.getCoordinatesFromSearchInput(state).then(coordinates => {
+        console.log(coordinates)
+        if (coordinates.error) {
+          alert(coordinates.error)
+        } else {
+          API.getPostsUsingCoordinates(coordinates).then(posts => {
+            this.setState({currentLocation: false, altPosts: posts})
+          })
+        }
+      })
 
-      fetch("http://localhost:3000/search", {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(search)
-        }).then(res => res.json()).then(address => this.getSelectedPosts(address))
-
-  }
-
-  getSelectedPosts = (address) => {
-    const coords = address
-
-    const postObj = {
-      longitude: coords[1],
-      latitude: coords[0]
-      }
-
-    fetch("http://localhost:3000/posts", {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(postObj)
-        }).then(res => res.json()).then(posts => this.setState({currentLocation: false, altPosts: posts}))
   }
 
   posts = () => {
     if(this.state.currentLocation){
-      return this.state.posts
-    }else{
-      return this.state.altPosts
+      let posts = this.state.posts.sort((a, b) => (a.ratings.length < b.ratings.length) ? 1 : -1)
+        return posts
+        }
+         else {
+            let altposts = this.state.altPosts.sort((a, b) => (a.ratings.length < b.ratings.length) ? 1 : -1)
+             return altposts
     }
   }
 
@@ -141,7 +91,6 @@ class App extends React.Component {
 
     return (
       <React.Fragment>
-
       <Route path="/" exact component={() => <Login login={this.login} />}/>
         {
           !this.state.user ? <Redirect to="/"></Redirect> : <Redirect to="/app"></Redirect> 

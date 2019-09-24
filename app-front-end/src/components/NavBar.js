@@ -27,22 +27,19 @@ logOut = () => {
 }
   render() {
     return (
-      <div className="ui menu">
-    <a onClick={this.goHome} className="item">
-    <i class="home icon"></i>
-    home
-    </a>
+    <div className="ui menu nav-options">
+      <a onClick={this.goHome} className="item">
+        <i class="home icon"></i>home
+      </a>
     <a className="item">
-    <i class="plus icon"></i>
-    <Link to={'/addPost'}>Post</Link>
+      <i class="plus icon"></i>
+        <Link to={'/addPost'}>Post</Link>
     </a>
     <a onClick={this.props.toggleForm} className="item">
-    <i class="compass icon"></i>
-      Location
+      <i class="compass icon"></i> Location
     </a>
       <a className="item" onClick={this.logOut}>
-      <i class="sign out alternate icon"></i>
-      Log Out
+        <i class="sign out alternate icon"></i> Log Out
       </a>
   </div>
     );

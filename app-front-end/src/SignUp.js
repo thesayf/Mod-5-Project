@@ -1,5 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
+import API from './adapters/API';
 
 class SignUp extends React.Component {
 
@@ -7,7 +8,7 @@ class SignUp extends React.Component {
       name: '',
       email: '',
       password: '',
-      image: ''
+      img: '',
   }
 
   handleChange = (e) => {
@@ -16,28 +17,30 @@ class SignUp extends React.Component {
     })
   }
 
-  handleClick = () => {
-    const userObj = {
-      name: this.state.name,
-      email: this.state.email,
-      password: this.state.password,
-      image: this.state.image
-    } 
+  handleImageUpload = (e) => {
+    this.setState({img: e.target.files[0]})
+  }
 
-    fetch("http://localhost:3000/users", {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(userObj)
-    }).then(res => res.json()).then(response => localStorage.token = response.token)
+  handleClick = () => {
+  API.createUser(this.state).then(console.log)
+    
+    
+    // response => localStorage.token = response.token)
   }
 
   render() {
     
     return (
-      <div className="ui container">
-      <div className="ui inverted segment">
-      <div className="ui inverted form">
-        <div className="two fields">
+      <React.Fragment>
+        <div className="login-container"> 
+        <div className="login-form-container">
+      <div className="ui segment login-width">
+      <div className="login-logo">
+      <div className="ui Tiny image logo-text-center">
+        <img src={require('./logo_transparent_background.png')}></img>
+    </div>
+    </div>
+      <div className="ui form">
           <div className="field">
             <label>Name</label>
             <input onChange={(e) => this.handleChange(e)} name="name" placeholder="First Name" type="text"></input>
@@ -52,9 +55,8 @@ class SignUp extends React.Component {
           </div>
           <div className="field">
             <label>Avatar</label>
-            <input onChange={(e) => this.handleChange(e)} name="image" placeholder="image" type="text"></input>
+            <input onChange={this.handleImageUpload} classname='ui button' name="img" type="file"></input>
           </div>
-        </div>
         <div className="inline field">
            <Link to={'/'}> Log In</Link>
         </div>
@@ -62,6 +64,8 @@ class SignUp extends React.Component {
       </div>
     </div>
     </div>
+    </div>
+    </React.Fragment>
     )
   }
 }

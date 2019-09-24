@@ -11,8 +11,9 @@ class RatingsController < ApplicationController
     end
 
     def delete_new_rating
-        rating = Rating.find_by(id: params[:likeId])
+        rating = Rating.find_by(user_id: params[:userID], post_id: params[:postID])
         rating.destroy
+        
     end
 
 

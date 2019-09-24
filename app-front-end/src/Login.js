@@ -27,30 +27,30 @@ class Login extends React.Component {
     return (
     <React.Fragment>
     
-    <div className="ui Tiny image logo-text-center">
+    <div className="login-container">
+    <div className="login-form-container">
+      <div className="ui segment login-width">
+      <div className="login-logo">
+    <div className="ui medium image ">
         <img src={require('./logo_transparent_background.png')}></img>
     </div>
-    <div className="ui container">
-    <div className="ui aligned center login-box-padding">
-      <div className="ui segment">
+    </div>
       <div className="ui form">
-        <div className="two fields">
           <div className="field">
             <label>email</label>
             <input onChange={(e) => this.handleChange(e)} name="email" placeholder="email" type="text"></input>
           </div>
           <div className="field">
             <label>Password</label>
-            <input onChange={(e) => this.handleChange(e)} name="password" placeholder="Last Name" type="text"></input>
+            <input onChange={(e) => this.handleChange(e)} name="password" placeholder="Last Name" type="password"></input>
           </div>
-        </div>
         <div className="inline field">
            <Link to={'/signUp'}> Sign Up</Link>
         </div>
         <div onClick={this.handleClick}className="ui submit button">Submit</div>
       </div>
     </div>
-    </div> 
+    </div>
     </div>
     </React.Fragment>
     )

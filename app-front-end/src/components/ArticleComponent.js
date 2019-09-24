@@ -15,23 +15,14 @@ class ArticleComponent extends React.Component {
   }
 
   componentDidMount = () => {
-   const liked = this.props.post.ratings.map(r => r.user_info.id).includes(this.props.user.id)
+    const liked = this.props.post.ratings.map(r => r.user_info.id).includes(this.props.user.id)
     this.setState({liked: liked})
-
-    let thisusersliked = this.state.thisPostsLikes.map(rating => {
-      if(rating.user_id === this.props.user.id) {
-        return rating.id
-      }
-    })
-
-    this.setState({thisUserLiked: thisusersliked})
   }
 
   handleChange = (e) => {
     this.setState({
       commentInput: e.target.value
     })
-  
   }
 
   handleKeyPress = (e) => {
@@ -60,13 +51,17 @@ class ArticleComponent extends React.Component {
 
    if(this.state.liked){
     const dislikeObj = {
-      likeId: this.state.thisUserLiked[0]
+      userID: this.props.user.id,
+      postID: this.props.post.id
     }
     fetch("http://localhost:3000/deleterating", {
                   method: 'POST',
                   headers: {'Content-Type': 'application/json'},
                   body: JSON.stringify(dislikeObj)
-          }).then(res => res.json()).then(this.setState({likes: this.state.likes - 1, liked: false}))
+          }).then(res => {
+            console.log(res)
+            this.setState({likes: this.state.likes - 1, liked: false})
+          })
    }
    else{
     const likeObj = {
@@ -81,8 +76,7 @@ class ArticleComponent extends React.Component {
           .then(res => res.json())
           .then(like => this.setState({
             likes: this.state.likes + 1, 
-            liked: true,
-            thisPostsLikes: [...this.state.thisPostsLikes, like]
+            liked: true
           }))
    }
     
@@ -92,13 +86,11 @@ class ArticleComponent extends React.Component {
 
 
   render() {  
-    // console.log(this.props.post.ratings);
-    console.log(this.state.thisPostsLikes);
     
     return (
       <React.Fragment>
-      <div className="ui grid custom-card"> 
-      <div className="ui card column 16 wide fulid">
+      <div className="custom-card card-custom-css"> 
+      <div className="ui card card-custom-css-mobile ">
         <div className="content">
           <div className="right floated meta">14h</div>
           <img className="ui avatar image" src={this.props.post.user.image} />
@@ -113,8 +105,10 @@ class ArticleComponent extends React.Component {
         <div className="content">
         <a className="header">{this.props.post.title}</a>
           <span onClick={this.addLikes} className="right floated">
-            <i className="lemon outline like icon"></i>
-            {this.state.likes} Jucy rating
+            {
+              this.state.liked ? <i className="lemon outline like icon red"></i> : <i className="lemon outline like icon"></i>
+            }
+            {this.state.likes} Juiciness rating
           </span>
           <i onClick={this.commentClick}className="comment icon"></i>
           
