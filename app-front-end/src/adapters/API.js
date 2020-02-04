@@ -78,7 +78,6 @@ const createPost = (formDetails, state) => {
     fd.append("userID", state.user.id)
     fd.append("longitude", state.longitude)
     fd.append("latitude", state.latitude)
-    fd.append("array", arr)
     if(formDetails.recordedImage){
       fd.append("image", formDetails.recordedImage)
     }
